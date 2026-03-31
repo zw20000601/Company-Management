@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, CheckSquare, FolderKanban, BarChart2,
   Calendar, Users, FileText, MessageSquare, Settings,
-  HelpCircle, LogOut, Zap
+  HelpCircle, LogOut, Zap, ChevronRight
 } from 'lucide-react';
 
 const menuItems = [
@@ -22,7 +22,7 @@ const menuItems = [
 const generalItems = [
   { label: 'Settings', icon: Settings, href: '/settings' },
   { label: 'Help & Support', icon: HelpCircle, href: '/help' },
-  { label: 'Logout', icon: LogOut, href: '/' },
+  { label: 'Logout', icon: LogOut, href: '/', danger: true },
 ];
 
 export default function Sidebar() {
@@ -32,11 +32,11 @@ export default function Sidebar() {
     <aside className="w-56 bg-white border-r border-gray-100 flex flex-col h-full fixed left-0 top-0 bottom-0 z-10">
       {/* Logo */}
       <div className="px-5 py-5 border-b border-gray-100">
-        <Link href="/dashboard" className="flex items-center gap-2.5">
-          <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center">
+        <Link href="/dashboard" className="flex items-center gap-2.5 group">
+          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl flex items-center justify-center shadow-sm shadow-blue-200 group-hover:shadow-md group-hover:shadow-blue-300 transition-all">
             <Zap size={15} className="text-white" />
           </div>
-          <span className="font-bold text-gray-900 text-lg">TaskFlow</span>
+          <span className="font-bold text-gray-900 text-lg tracking-tight">TaskFlow</span>
         </Link>
       </div>
 
@@ -51,19 +51,21 @@ export default function Sidebar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 ${
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 group ${
                   active
                     ? 'bg-blue-50 text-blue-600'
-                    : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                    : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800'
                 }`}
               >
-                <Icon size={17} className={active ? 'text-blue-600' : ''} />
+                <Icon size={17} className={active ? 'text-blue-600' : 'group-hover:text-gray-700 transition-colors'} />
                 <span className="flex-1">{item.label}</span>
-                {item.badge && (
-                  <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-semibold">
+                {item.badge ? (
+                  <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
                     {item.badge}
                   </span>
-                )}
+                ) : active ? (
+                  <ChevronRight size={13} className="text-blue-400" />
+                ) : null}
               </Link>
             );
           })}
@@ -78,10 +80,12 @@ export default function Sidebar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 ${
-                  active
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 group ${
+                  item.danger
+                    ? 'text-red-400 hover:bg-red-50 hover:text-red-500'
+                    : active
                     ? 'bg-blue-50 text-blue-600'
-                    : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                    : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800'
                 }`}
               >
                 <Icon size={17} />
@@ -93,10 +97,13 @@ export default function Sidebar() {
       </div>
 
       {/* Upgrade Banner */}
-      <div className="mx-3 mb-4 p-4 rounded-2xl bg-gradient-to-br from-blue-600 to-blue-700 text-white">
-        <p className="font-bold text-sm mb-1">Upgrade to Pro</p>
-        <p className="text-xs text-blue-100 mb-3 leading-relaxed">Unlock advanced analytics and manage unlimited properties</p>
-        <button className="w-full bg-white text-blue-600 text-xs font-bold py-2 rounded-xl hover:bg-blue-50 transition-colors">
+      <div className="mx-3 mb-4 p-4 rounded-2xl bg-gradient-to-br from-blue-600 to-blue-700 text-white relative overflow-hidden">
+        {/* Decorative circles */}
+        <div className="absolute -top-4 -right-4 w-16 h-16 rounded-full bg-white/10"></div>
+        <div className="absolute -bottom-6 -left-2 w-20 h-20 rounded-full bg-white/5"></div>
+        <p className="font-bold text-sm mb-1 relative">Upgrade to Pro</p>
+        <p className="text-xs text-blue-100 mb-3 leading-relaxed relative">Unlock advanced analytics and manage unlimited projects</p>
+        <button className="w-full bg-white text-blue-600 text-xs font-bold py-2 rounded-xl hover:bg-blue-50 transition-colors relative shadow-sm">
           Upgrade Now
         </button>
       </div>
