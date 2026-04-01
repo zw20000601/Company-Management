@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Bell, Search, ChevronDown, Check, Clock, AlertCircle, CheckCircle2, X } from 'lucide-react';
+import { useAuth } from '@/lib/AuthContext';
 
 interface Notification {
   id: number;
@@ -32,7 +33,9 @@ interface TopBarProps {
   subtitle?: string;
 }
 
-export default function TopBar({ title = 'Welcome back, Alex!', subtitle = "Here's what's happening with your team today" }: TopBarProps) {
+export default function TopBar({ title, subtitle = "Here's what's happening with your team today" }: TopBarProps) {
+  const { user } = useAuth();
+  const displayTitle = title || `Welcome back, ${user?.name?.split(' ')[0] || 'Alex'}! 👋`;
   const [notifOpen, setNotifOpen] = useState(false);
   const [notifications, setNotifications] = useState(initialNotifications);
   const [userOpen, setUserOpen] = useState(false);
@@ -60,7 +63,7 @@ export default function TopBar({ title = 'Welcome back, Alex!', subtitle = "Here
   return (
     <header className="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-6 sticky top-0 z-10">
       <div>
-        <h2 className="text-base font-semibold text-gray-900">{title}</h2>
+        <h2 className="text-base font-semibold text-gray-900">{displayTitle}</h2>
         <p className="text-xs text-gray-400">{subtitle}</p>
       </div>
 
@@ -160,11 +163,11 @@ export default function TopBar({ title = 'Welcome back, Alex!', subtitle = "Here
             className="flex items-center gap-2.5 pl-3 border-l border-gray-100"
           >
             <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">
-              AC
+              {user?.avatar || 'AC'}
             </div>
             <div className="hidden sm:block text-left">
-              <p className="text-sm font-semibold text-gray-900 leading-tight">Alex Chen</p>
-              <p className="text-xs text-gray-400 leading-tight">hello@company.com</p>
+              <p className="text-sm font-semibold text-gray-900 leading-tight">{user?.name || 'Alex Chen'}</p>
+              <p className="text-xs text-gray-400 leading-tight">{user?.email || 'hello@company.com'}</p>
             </div>
             <ChevronDown size={14} className={`text-gray-400 transition-transform ${userOpen ? 'rotate-180' : ''}`} />
           </button>

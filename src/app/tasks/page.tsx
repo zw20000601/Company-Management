@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
-import { tasks as initialTasks, teamMembers, Task, Priority, TaskStatus, taskStatusLabels } from '@/lib/data';
+import { teamMembers, Task, Priority, TaskStatus, taskStatusLabels } from '@/lib/data';
+import { useTasks } from '@/lib/TaskContext';
 import {
   Plus, Search, Filter, MoreHorizontal,
   Calendar, User, Tag, X, Check, Clock, AlertCircle,
@@ -125,7 +126,7 @@ function KanbanCard({ task, onStatusChange, onClick }: {
 }
 
 export default function TasksPage() {
-  const [tasks, setTasks] = useState(initialTasks);
+  const { tasks, addTask, updateTaskStatus } = useTasks();
   const [search, setSearch] = useState('');
   const [filterStatus, setFilterStatus] = useState<TaskStatus | 'all'>('all');
   const [filterPriority, setFilterPriority] = useState<Priority | 'all'>('all');
@@ -148,8 +149,7 @@ export default function TasksPage() {
 
   const handleSubmit = () => {
     if (!form.title.trim()) return;
-    const newTask: Task = {
-      id: tasks.length + 1,
+    addTask({
       title: form.title,
       description: form.description,
       assignee: form.assignee || 'Unassigned',
@@ -161,17 +161,13 @@ export default function TasksPage() {
       createdAt: new Date().toISOString().split('T')[0],
       progress: form.status === 'completed' ? 100 : form.status === 'in_progress' ? 30 : 0,
       tags: form.tags.split(',').map(t => t.trim()).filter(Boolean),
-    };
-    setTasks([newTask, ...tasks]);
+    });
     setShowModal(false);
     setForm({ title: '', description: '', assignee: '', priority: 'medium', status: 'todo', project: '', dueDate: '', tags: '' });
   };
 
   const handleStatusChange = (taskId: number, newStatus: TaskStatus) => {
-    setTasks(tasks.map(t => t.id === taskId ? {
-      ...t, status: newStatus,
-      progress: newStatus === 'completed' ? 100 : newStatus === 'in_progress' ? Math.max(t.progress, 10) : t.progress
-    } : t));
+    updateTaskStatus(taskId, newStatus);
     if (selectedTask?.id === taskId) {
       setSelectedTask(prev => prev ? { ...prev, status: newStatus } : null);
     }

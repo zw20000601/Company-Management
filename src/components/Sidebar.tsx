@@ -1,12 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard, CheckSquare, FolderKanban, BarChart2,
   Calendar, Users, FileText, MessageSquare, Settings,
   HelpCircle, LogOut, Zap, ChevronRight
 } from 'lucide-react';
+import { useAuth } from '@/lib/AuthContext';
 
 const menuItems = [
   { label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard' },
@@ -27,6 +28,13 @@ const generalItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    router.push('/login');
+  };
 
   return (
     <aside className="w-56 bg-white border-r border-gray-100 flex flex-col h-full fixed left-0 top-0 bottom-0 z-10">
@@ -76,14 +84,26 @@ export default function Sidebar() {
           {generalItems.map((item) => {
             const Icon = item.icon;
             const active = pathname === item.href;
+
+            if (item.danger) {
+              return (
+                <button
+                  key={item.label}
+                  onClick={handleLogout}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 text-red-400 hover:bg-red-50 hover:text-red-500"
+                >
+                  <Icon size={17} />
+                  <span>{item.label}</span>
+                </button>
+              );
+            }
+
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 group ${
-                  item.danger
-                    ? 'text-red-400 hover:bg-red-50 hover:text-red-500'
-                    : active
+                  active
                     ? 'bg-blue-50 text-blue-600'
                     : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800'
                 }`}

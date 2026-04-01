@@ -107,7 +107,7 @@ export default function LandingPage() {
             ))}
           </div>
 
-          <Link href="/dashboard" className="bg-gray-900 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-gray-700 transition-colors">
+          <Link href="/login" className="bg-gray-900 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-gray-700 transition-colors">
             Login
           </Link>
         </div>

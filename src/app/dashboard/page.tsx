@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
-import { teamMembers, tasks, projects, statusLabels, monthlyData } from '@/lib/data';
+import { teamMembers, projects, statusLabels, monthlyData } from '@/lib/data';
+import { useTasks } from '@/lib/TaskContext';
 import {
   MoreHorizontal, TrendingUp, AlertTriangle, CheckCircle2, Clock,
   ArrowUpRight, Plus, Eye, Download, RefreshCw, Calendar,
@@ -70,6 +71,7 @@ function CardMenu({ items }: { items: { label: string; icon?: React.ReactNode; d
 }
 
 export default function DashboardPage() {
+  const { tasks } = useTasks();
   const inProgress = tasks.filter(t => t.status === 'in_progress').length;
   const completed = tasks.filter(t => t.status === 'completed').length;
   const overdue = tasks.filter(t => t.status === 'overdue').length;
